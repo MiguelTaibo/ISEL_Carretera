@@ -1,5 +1,14 @@
 #!bin/bash
 
+#
+#	Script que muestra como se cumplen todas las especificaciones 
+#	del ejercicio de las carreteras propuesto en clase de ISEL
+#	2020 (cuando se cumplan)
+#
+#	author: Miguel taibo
+#	date 27/02/2020
+#
+
 clear
 
 spin -a carretera.pml

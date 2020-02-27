@@ -2,6 +2,10 @@
  *	Archivo pml que modela y verifica el ejecicio
  *	propuesto en clase: carrtera principal y secundaria.
  *	
+ *	author: Miguel Taibo
+ *	date:	27/02/2020
+ *
+ *
  *	Leyenda:
  *		R : red (rojo)
  *		Y : yellow (amarillo)
@@ -23,13 +27,13 @@ ltl llega_coche_secundaria {
 	[](s -> <>Gs);
 }
 ltl no_llega_coche_secundaria {
-	[](!s -> <>(Gp W s));
+	[](!s -> <>(Gp U s));
 }
 ltl uno_en_rojo {
 	[](Rp || Rs);
 }
 ltl cambio_pasando_por_amarillo {
-	[](!s || (<>(s && (!Rs U Ys))));
+	[](!s || (<>(s && (!Rs W Ys))));
 }
 ltl prioridad_de_principal {
 	[](Gs -> <>Gp);
@@ -41,27 +45,34 @@ ltl tiempo_minimo_secundario {
 	[](Gp -> (Gp U T));
 }
 
+
+int T;
+
 //Preparacion de timers
 #define timer int 
-#define set(tmr,val) tmr=val
+#define set(tmr,val) tmr=val; printf("set timeout %d\n",val );
 #define expire(tmr) (tmr==0) /*timeout*/ 
-#define tick(tmr) if :: tmr>=0 -> tmr=tmr-1 :: else fi 
+#define tick(tmr) if :: tmr>0 -> printf("tick,%d\n",tmr); tmr=tmr-1 :: else printf("notick%d\n",tmr); T=1  fi 
 
-#define delay(tmr,val) set(tmr,val); expire(tmr);
+//#define delay(tmr,val) set(tmr,val); expire(tmr);
 
-#define Short 3
+#define Short 5
 #define Long 10
+
+#define timeout true
 
 timer tmr1
 
 active proctype Timers() { 
 	do 
-	:: timeout -> atomic { tick(tmr1) } 
+	:: timeout -> atomic { 
+		tick(tmr1)
+	} 
 	od
 }
 
 
-//Variables
+//Variables globales
 mtype = {GR, YR, RG, RY}
 
 #define GR 1
@@ -72,7 +83,6 @@ mtype = {GR, YR, RG, RY}
 mtype estado
 int s;
 
-int T;
 int Rp, Yp, Gp;
 int Rs, Ys, Gs;
 
@@ -95,7 +105,7 @@ active proctype fsm_carretera () {
 			estado = YR;
 			
 			T=0;
-			s = 0;
+			
 
 			Rp = 0;
 			Yp = 1;
@@ -120,10 +130,6 @@ active proctype fsm_carretera () {
 			Rs = 0;
 			Ys = 0;
 			Gs = 1;
-			//Yp = 0; // Semaforo principal
-			//Rp = 1; // a rojo
-			//Rs = 0; // Semaforo secundario
-			//Gs = 1; // a verde
 			set(tmr1,Long);
 		fi;
 	}
@@ -132,6 +138,7 @@ active proctype fsm_carretera () {
 		:: T ->
 			estado = RY;
 
+			s = 0;
 			T = 0;
 
 			Rp = 1;
@@ -140,8 +147,7 @@ active proctype fsm_carretera () {
 			Rs = 0;
 			Ys = 1;
 			Gs = 0;
-			//Ys = 1; // Semaforo secundario
-			//Gs = 0; // a amarillo
+
 			set(tmr1,Short)
 
 		fi;
@@ -159,23 +165,22 @@ active proctype fsm_carretera () {
 			Rs = 1;
 			Ys = 0;
 			Gs = 0;
-			//Rp = 0; // Semaforo principal
-			//Gp = 1; // a verde
-			//Ys = 0; // Semaforo secundario
-			//Rs = 1; // a rojo
-			set(tmr1,1)
+
+			set(tmr1,Long)
 		fi;
 	}
 	od
 }
 
+// Modelado del entorno
 active proctype entorno () {
 	printf ("estado:%d, T:%d, S:%d, Sp:%d %d %d, Ss:%d %d %d \n", estado, T, s, Rp, Yp, Gp, Rs, Ys, Gs);
 	do
 	::	if
-		:: s = 1
-		:: expire(tmr1)-> T=1
+		:: skip
+		:: s= 1;
 		fi;
+
 		printf ("estado:%d, T:%d, S:%d, Sp:%d %d %d, Ss:%d %d %d \n", estado, T, s, Rp, Yp, Gp, Rs, Ys, Gs);
 	od
 }
