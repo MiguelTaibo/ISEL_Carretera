@@ -27,7 +27,7 @@ ltl llega_coche_secundaria {
 	[](s -> <>Gs);
 }
 ltl no_llega_coche_secundaria {
-	[](!s -> <>(Gp U s));
+	[](!s -> <>(Gp W s));
 }
 ltl uno_en_rojo {
 	[](Rp || Rs);
@@ -137,7 +137,6 @@ active proctype fsm_carretera () {
 		if
 		:: T ->
 			estado = RY;
-
 			s = 0;
 			T = 0;
 
