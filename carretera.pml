@@ -83,8 +83,12 @@ mtype = {GR, YR, RG, RY}
 mtype estado
 int s;
 
-int Rp, Yp, Gp;
-int Rs, Ys, Gs;
+int Rp = 0;
+int Yp = 0;
+int Gp = 1;
+int Rs = 1;
+int Ys = 0;
+int Gs = 0;
 
 
 
