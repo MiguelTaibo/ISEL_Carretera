@@ -1,4 +1,5 @@
 #include <stdlib.h>
+
 #include "fsm.h"
 
 fsm_t*
