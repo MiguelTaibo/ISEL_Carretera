@@ -7,7 +7,7 @@
 
 #include "fsm_cruce.h"
 
-void *checkInputsThread (void *arg) 
+void *checkInputsThread (void *arg)
 {
 
 	char *tmpStr = (char *) arg;
@@ -31,7 +31,7 @@ void *checkInputsThread (void *arg)
 	pthread_exit(NULL);
 }
 
-/*void configurar () 
+/*void configurar ()
 {
 	wiringPiSetup();
 	//Input PIN
@@ -66,9 +66,8 @@ int main() {
 	//Finite State Machine
 	fsm_t* fsm_cruce = fsm_new_cruce();
 
-	printf("escribe\n");
 	while(1) {
-		fsm_fire(fsm_cruce); 
+		fsm_fire(fsm_cruce);
 		timespec_add(&next,&next,&T);
 		delay_until(&next);
 
